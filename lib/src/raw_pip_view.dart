@@ -9,6 +9,8 @@ class RawPIPView extends StatefulWidget {
   final bool avoidKeyboard;
   final Widget? topWidget;
   final Widget? bottomWidget;
+  final double? floatingBorderRadius;
+
   // this is exposed because trying to watch onTap event
   // by wrapping the top widget with a gesture detector
   // causes the tap to be lost sometimes because it
@@ -22,6 +24,7 @@ class RawPIPView extends StatefulWidget {
     this.floatingHeight,
     this.avoidKeyboard = true,
     this.topWidget,
+    this.floatingBorderRadius,
     this.bottomWidget,
     this.onTapTopWidget,
   }) : super(key: key);
@@ -151,15 +154,9 @@ class RawPIPViewState extends State<RawPIPView> with TickerProviderStateMixin {
         final height = constraints.maxHeight;
         double? floatingWidth = widget.floatingWidth;
         double? floatingHeight = widget.floatingHeight;
-        if (floatingWidth == null && floatingHeight != null) {
-          floatingWidth = width / height * floatingHeight;
-        }
         floatingWidth ??= 100.0;
-        if (floatingHeight == null) {
-          floatingHeight = height / width * floatingWidth;
-        }
 
-        final floatingWidgetSize = Size(floatingWidth, floatingHeight);
+        final floatingWidgetSize = Size(floatingWidth, floatingHeight ?? 0);
         final fullWidgetSize = Size(width, height);
 
         _updateCornersOffsets(
@@ -172,7 +169,7 @@ class RawPIPViewState extends State<RawPIPView> with TickerProviderStateMixin {
 
         // BoxFit.cover
         final widthRatio = floatingWidth / width;
-        final heightRatio = floatingHeight / height;
+        final heightRatio = floatingHeight ?? 0 / height;
         final scaledDownScale = widthRatio > heightRatio
             ? floatingWidgetSize.width / fullWidgetSize.width
             : floatingWidgetSize.height / fullWidgetSize.height;
@@ -207,7 +204,8 @@ class RawPIPViewState extends State<RawPIPView> with TickerProviderStateMixin {
                           : toggleFloatingAnimationValue);
                   final borderRadius = Tween<double>(
                     begin: 0,
-                    end: 10,
+                    end: widget.floatingBorderRadius ??
+                        defaultFloatingBorderRadius,
                   ).transform(toggleFloatingAnimationValue);
                   final width = Tween<double>(
                     begin: fullWidgetSize.width,
