@@ -36,10 +36,15 @@ class PIPView extends StatefulWidget {
 
 class PIPViewState extends State<PIPView> with TickerProviderStateMixin {
   Widget? _bottomWidget;
+  bool isFloating = false;
 
   void presentBelow(Widget widget) {
     dismissKeyboard(context);
     setState(() => _bottomWidget = widget);
+  }
+
+  isPipFloating() {
+    return isFloating;
   }
 
   void stopFloating() {
@@ -50,7 +55,7 @@ class PIPViewState extends State<PIPView> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final isFloating = _bottomWidget != null;
+    isFloating = _bottomWidget != null;
     return RawPIPView(
       avoidKeyboard: widget.avoidKeyboard,
       bottomWidget: isFloating
